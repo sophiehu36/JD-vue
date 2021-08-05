@@ -16,7 +16,17 @@
         alt="banner"
       />
     </div>
-    <div>123123</div>
+    <div class="icons">
+      <div v-for="(item, index) in iconData" class="icons__item" :key="index">
+        <img
+          :src="require('./assets/imgs/' + item.icon)"
+          alt=""
+          class="icons__item__img"
+        />
+        <p class="icons__item__desc">{{ item.desc }}</p>
+      </div>
+    </div>
+    <div class="gap"></div>
   </div>
 
   <div class="docker">
@@ -39,6 +49,28 @@
   </div>
 </template>
 
+<script>
+export default {
+  name: "",
+  data() {
+    return {
+      iconData: [
+        { icon: "超市.png", desc: "超市便利" },
+        { icon: "菜市场.png", desc: "菜市场" },
+        { icon: "水果店.png", desc: "水果店" },
+        { icon: "鲜花.png", desc: "鲜花绿植" },
+        { icon: "医药健康.png", desc: "医药健康" },
+        { icon: "家居.png", desc: "家居时尚" },
+        { icon: "蛋糕.png", desc: "烘焙蛋糕" },
+        { icon: "签到.png", desc: "签到" },
+        { icon: "大牌免运.png", desc: "大牌免运" },
+        { icon: "红包.png", desc: "红包套餐" }
+      ]
+    };
+  }
+};
+</script>
+
 <style lang="scss">
 @import "./style/variables.scss";
 @import "./style/mixins.scss";
@@ -57,7 +89,7 @@
   padding: 0.16rem 0.24rem 0.16rem 0;
   font-size: 0.16rem;
   line-height: 0.22rem;
-  color: $content-fontcolor;
+  color: $content-fontColor;
   @include ellipsis;
   .position__icon {
     font-size: 0.2rem;
@@ -98,6 +130,35 @@
   }
 }
 
+.icons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+    margin-top: 0.16rem;
+    &__img {
+      width: 0.4rem;
+      height: 0.4rem;
+    }
+    &__desc {
+      margin-top: 0.06rem;
+      margin-bottom: 0;
+      color: $content-fontColor;
+    }
+  }
+}
+
+.gap {
+  margin: 0.16rem -0.18rem 0 -0.18rem;
+  height: 0.1rem;
+  background: $content-bgColor;
+}
+
 .docker {
   position: absolute;
   display: flex;
@@ -107,8 +168,8 @@
   bottom: 0;
   width: 100%;
   height: 0.49rem;
-  border-top: 0.01rem solid #f1f1f1;
-  color: $content-fontcolor;
+  border-top: 0.01rem solid $content-bgColor;
+  color: $content-fontColor;
   &__item {
     display: inline-block;
     text-align: center;
