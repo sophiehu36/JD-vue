@@ -18,7 +18,7 @@
   <div class="icons">
     <div v-for="item in iconData" class="icons__item" :key="item.desc">
       <img
-        :src="require('../../assets/imgs/' + item.icon)"
+        :src="require('../assets/imgs/' + item.icon)"
         alt=""
         class="icons__item__img"
       />

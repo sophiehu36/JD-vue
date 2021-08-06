@@ -7,9 +7,9 @@
 </template>
 
 <script>
-import Docker from "./Docker.vue";
-import Nearby from "./Nearby.vue";
-import StaticPart from "./StaticPart.vue";
+import Docker from "../Docker.vue";
+import Nearby from "../Nearby.vue";
+import StaticPart from "../StaticPart.vue";
 
 export default {
   name: "Home",
@@ -17,7 +17,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 // @import "@/style/variables.scss";
 // @import "@/style/mixins.scss";
 
