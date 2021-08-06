@@ -8,16 +8,18 @@
         <input type="text" placeholder="请输入手机号" />
       </div>
       <div class="input__container">
-        <input type="password" placeholder="请输入密码" />
+        <input type="password" placeholder="请输入密码"/>
+      </div>
+      <div class="input__container">
+        <input type="password" placeholder="确认密码" />
       </div>
     </div>
     <div class="button">
-      <div class="button__login" @click="handleLogin">
-        登陆
+      <div class="button__register" @click="handleRegister">
+        注册
       </div>
       <div class="button__other">
-        <span @click="handleRegisterClick">立即注册</span
-        ><span class="button__other__gap">|</span><span>忘记密码</span>
+        <span @click="handleLoginClick">已有账号去登陆</span>
       </div>
     </div>
   </div>
@@ -29,15 +31,15 @@ export default {
   name: "Login",
   setup() {
     const router = useRouter();
-    const handleRegisterClick = () => {
-      router.push({ name: "Register" });
+    const handleLoginClick = () => {
+      router.push({ name: "Login" });
     };
-    const handleLogin = () => {
+    const handleRegister = () => {
       console.log("click");
       localStorage.isLogin = true;
       router.push({ name: "Home" });
     };
-    return { handleLogin, handleRegisterClick };
+    return { handleLoginClick, handleRegister };
   }
 };
 </script>
@@ -94,7 +96,7 @@ export default {
 
 .button {
   margin-top: 0.16rem;
-  &__login {
+  &__register {
     width: 2.95rem;
     height: 0.48rem;
     box-shadow: 0 0.04rem 0.08rem 0 rgba(0, 145, 255, 0.32);
