@@ -5,10 +5,14 @@
     </div>
     <div class="input">
       <div class="input__container">
-        <input type="text" placeholder="请输入手机号" />
+        <input type="text" placeholder="请输入用户名" v-model="data.username" />
       </div>
       <div class="input__container">
-        <input type="password" placeholder="请输入密码" />
+        <input
+          type="password"
+          placeholder="请输入密码"
+          v-model="data.password"
+        />
       </div>
     </div>
     <div class="button">
@@ -20,24 +24,50 @@
         ><span class="button__other__gap">|</span><span>忘记密码</span>
       </div>
     </div>
+    <Toast v-if="toastData.showToast" :message="toastData.toastMsg" />
   </div>
 </template>
 
 <script>
+// 系统级别的引用放在顶部
+import { reactive } from "@vue/reactivity";
 import { useRouter } from "vue-router";
+// 自己写的引用放在下面
+import { post } from "@/utils/request";
+import Toast, { useToastEffect } from "@/components/Toast";
+
 export default {
   name: "Login",
+  components: { Toast },
+  // setup关注主流程
   setup() {
     const router = useRouter();
+    const data = reactive({
+      username: "",
+      password: ""
+    });
+    const { toastData, showToast } = useToastEffect();
     const handleRegisterClick = () => {
       router.push({ name: "Register" });
     };
-    const handleLogin = () => {
-      console.log("click");
-      localStorage.isLogin = true;
-      router.push({ name: "Home" });
+    const handleLogin = async () => {
+      try {
+        const result = await post("/api/user/login", {
+          username: data.username,
+          password: data.password
+        });
+        console.log(result);
+        if (result?.errno === 0) {
+          localStorage.isLogin = true;
+          router.push({ name: "Home" });
+        } else {
+          showToast("登录失败");
+        }
+      } catch (e) {
+        showToast("请求失败");
+      }
     };
-    return { handleLogin, handleRegisterClick };
+    return { handleLogin, handleRegisterClick, data, toastData };
   }
 };
 </script>

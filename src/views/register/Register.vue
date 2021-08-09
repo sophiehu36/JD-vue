@@ -5,7 +5,7 @@
     </div>
     <div class="input">
       <div class="input__container">
-        <input type="text" placeholder="请输入手机号" />
+        <input type="text" placeholder="请输入用户名" />
       </div>
       <div class="input__container">
         <input type="password" placeholder="请输入密码"/>

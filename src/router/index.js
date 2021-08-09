@@ -10,6 +10,16 @@ const routes = [
     component: Home
   },
   {
+    path: "/",
+    redirect: to => {
+      if (localStorage.isLogin) {
+        return "/home";
+      } else {
+        return "/login";
+      }
+    }
+  },
+  {
     path: "/login",
     name: "Login",
     component: Login,
