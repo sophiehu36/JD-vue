@@ -5,14 +5,10 @@
     </div>
     <div class="input">
       <div class="input__container">
-        <input type="text" placeholder="请输入用户名" v-model="data.username" />
+        <input type="text" placeholder="请输入用户名" v-model="username" />
       </div>
       <div class="input__container">
-        <input
-          type="password"
-          placeholder="请输入密码"
-          v-model="data.password"
-        />
+        <input type="password" placeholder="请输入密码" v-model="password" />
       </div>
     </div>
     <div class="button">
@@ -30,44 +26,56 @@
 
 <script>
 // 系统级别的引用放在顶部
-import { reactive } from "@vue/reactivity";
+import { reactive, toRefs } from "vue";
 import { useRouter } from "vue-router";
 // 自己写的引用放在下面
 import { post } from "@/utils/request";
 import Toast, { useToastEffect } from "@/components/Toast";
 
+const useLoginEffect = showToast => {
+  const router = useRouter();
+  const data = reactive({
+    username: "",
+    password: ""
+  });
+  const { username, password } = toRefs(data);
+
+  const handleLogin = async () => {
+    try {
+      const result = await post("/api/user/login", {
+        username: username,
+        password: password
+      });
+      console.log(result);
+      if (result?.errno === 0) {
+        localStorage.isLogin = true;
+        router.push({ name: "Home" });
+      } else {
+        showToast("登录失败");
+      }
+    } catch (e) {
+      showToast("请求失败");
+    }
+  };
+
+  return { username, password, handleLogin };
+};
+
 export default {
   name: "Login",
   components: { Toast },
-  // setup关注主流程
+  // setup职责就是告诉你，代码执行的一个流程
   setup() {
     const router = useRouter();
-    const data = reactive({
-      username: "",
-      password: ""
-    });
+
     const { toastData, showToast } = useToastEffect();
+    const { username, password, handleLogin } = useLoginEffect(showToast);
+
     const handleRegisterClick = () => {
       router.push({ name: "Register" });
     };
-    const handleLogin = async () => {
-      try {
-        const result = await post("/api/user/login", {
-          username: data.username,
-          password: data.password
-        });
-        console.log(result);
-        if (result?.errno === 0) {
-          localStorage.isLogin = true;
-          router.push({ name: "Home" });
-        } else {
-          showToast("登录失败");
-        }
-      } catch (e) {
-        showToast("请求失败");
-      }
-    };
-    return { handleLogin, handleRegisterClick, data, toastData };
+
+    return { handleLogin, handleRegisterClick, username, password, toastData };
   }
 };
 </script>
