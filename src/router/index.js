@@ -1,28 +1,24 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import Home from "@/views/home/Home.vue";
-import Login from "@/views/login/Login.vue";
-import Register from "@/views/register/Register.vue";
 
 const routes = [
   {
-    path: "/home",
+    path: "/",
     name: "Home",
-    component: Home
+    // 异步路由，只有访问home页面时才加载对应资源
+    component: () =>
+      import(/* webpackChunkName: "home" */ "@/views/home/Home.vue")
   },
   {
-    path: "/",
-    redirect: to => {
-      if (localStorage.isLogin) {
-        return "/home";
-      } else {
-        return "/login";
-      }
-    }
+    path: "/shop/:id",
+    name: "Shop",
+    component: () =>
+      import(/* webpackChunkName: "shop" */ "@/views/shop/Shop.vue")
   },
   {
     path: "/login",
     name: "Login",
-    component: Login,
+    component: () =>
+      import(/* webpackChunkName: "login" */ "@/views/login/Login.vue"),
     // 访问Login页面前执行
     beforeEnter: (to, from, next) => {
       const isLogin = localStorage.isLogin;
@@ -32,7 +28,10 @@ const routes = [
   {
     path: "/register",
     name: "Register",
-    component: Register,
+    component: () =>
+      import(
+        /* webpackChunkName: "register" */ "@/views/register/Register.vue"
+      ),
     // 访问Login页面前执行
     beforeEnter: (to, from, next) => {
       const isLogin = localStorage.isLogin;

@@ -8,7 +8,12 @@
         <input type="text" placeholder="请输入用户名" v-model="username" />
       </div>
       <div class="input__container">
-        <input type="password" placeholder="请输入密码" v-model="password" />
+        <input
+          type="password"
+          placeholder="请输入密码"
+          v-model="password"
+          autocomplete="new-password"
+        />
       </div>
       <div class="input__container">
         <input
@@ -47,18 +52,17 @@ const useRegisterEffect = showToast => {
   });
   const { username, password, confirmPassword } = toRefs(data);
   const handleRegister = async () => {
-    if (data.password !== data.confirmPassword) {
+    if (password.value !== confirmPassword.value) {
       showToast("请重新确认密码");
     } else {
       try {
         const result = await post("/api/user/register", {
-          username: username,
-          password: password
+          username: username.value,
+          password: password.value
         });
         console.log(result);
         if (result?.errno === 0) {
-          localStorage.isLogin = true;
-          router.push({ name: "Home" });
+          router.push({ name: "Login" });
         } else {
           showToast("注册失败");
         }

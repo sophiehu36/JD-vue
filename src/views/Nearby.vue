@@ -1,96 +1,45 @@
 <template>
   <div class="nearby">
     <h3 class="nearby__title">附近店铺</h3>
-    <div class="nearby__item">
-      <img src="../assets/imgs/near.png" alt="" class="nearby__item__img" />
-      <div class="nearby__content">
-        <div class="nearby__content__title">沃尔玛</div>
-        <div class="nearby__content__tags">
-          <span class="nearby__content__tag">月售1万+</span>
-          <span class="nearby__content__tag">起送¥0</span>
-          <span class="nearby__content__tag">基础运费¥5</span>
-        </div>
-        <p class="nearby__content__highlight">
-          VIP尊享满89元减4元运费券（每月3张）
-        </p>
-      </div>
-    </div>
-    <div class="nearby__item">
-      <img src="../assets/imgs/near.png" alt="" class="nearby__item__img" />
-      <div class="nearby__content">
-        <div class="nearby__content__title">沃尔玛</div>
-        <div class="nearby__content__tags">
-          <span class="nearby__content__tag">月售1万+</span>
-          <span class="nearby__content__tag">起送¥0</span>
-          <span class="nearby__content__tag">基础运费¥5</span>
-        </div>
-        <p class="nearby__content__highlight">
-          VIP尊享满89元减4元运费券（每月3张）
-        </p>
-      </div>
-    </div>
-    <div class="nearby__item">
-      <img src="../assets/imgs/near.png" alt="" class="nearby__item__img" />
-      <div class="nearby__content">
-        <div class="nearby__content__title">沃尔玛</div>
-        <div class="nearby__content__tags">
-          <span class="nearby__content__tag">月售1万+</span>
-          <span class="nearby__content__tag">起送¥0</span>
-          <span class="nearby__content__tag">基础运费¥5</span>
-        </div>
-        <p class="nearby__content__highlight">
-          VIP尊享满89元减4元运费券（每月3张）
-        </p>
-      </div>
-    </div>
-    <div class="nearby__item">
-      <img src="../assets/imgs/near.png" alt="" class="nearby__item__img" />
-      <div class="nearby__content">
-        <div class="nearby__content__title">沃尔玛</div>
-        <div class="nearby__content__tags">
-          <span class="nearby__content__tag">月售1万+</span>
-          <span class="nearby__content__tag">起送¥0</span>
-          <span class="nearby__content__tag">基础运费¥5</span>
-        </div>
-        <p class="nearby__content__highlight">
-          VIP尊享满89元减4元运费券（每月3张）
-        </p>
-      </div>
-    </div>
-    <div class="nearby__item">
-      <img src="../assets/imgs/near.png" alt="" class="nearby__item__img" />
-      <div class="nearby__content">
-        <div class="nearby__content__title">沃尔玛</div>
-        <div class="nearby__content__tags">
-          <span class="nearby__content__tag">月售1万+</span>
-          <span class="nearby__content__tag">起送¥0</span>
-          <span class="nearby__content__tag">基础运费¥5</span>
-        </div>
-        <p class="nearby__content__highlight">
-          VIP尊享满89元减4元运费券（每月3张）
-        </p>
-      </div>
-    </div>
-    <div class="nearby__item">
-      <img src="../assets/imgs/near.png" alt="" class="nearby__item__img" />
-      <div class="nearby__content">
-        <div class="nearby__content__title">沃尔玛</div>
-        <div class="nearby__content__tags">
-          <span class="nearby__content__tag">月售1万+</span>
-          <span class="nearby__content__tag">起送¥0</span>
-          <span class="nearby__content__tag">基础运费¥5</span>
-        </div>
-        <p class="nearby__content__highlight">
-          VIP尊享满89元减4元运费券（每月3张）
-        </p>
-      </div>
-    </div>
+    <router-link
+      :to="`/shop/${item._id}`"
+      v-for="item in nearbyList"
+      :key="item._id"
+    >
+      <ShopInfo :item="item" />
+    </router-link>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
+import { get } from "@/utils/request";
+import ShopInfo from "@/components/ShopInfo.vue";
+
+const useNearbyListEffect = () => {
+  const nearbyList = ref([]);
+
+  const getNearbyList = async () => {
+    const result = await get("/api/shop/hot-list");
+    console.log(result);
+    if (result?.errno === 0 && result?.data?.length) {
+      nearbyList.value = result.data;
+    }
+  };
+
+  return { nearbyList, getNearbyList };
+};
+
 export default {
-  name: "Nearby"
+  name: "Nearby",
+  components: { ShopInfo },
+  setup() {
+    const { nearbyList, getNearbyList } = useNearbyListEffect();
+
+    getNearbyList();
+
+    return { nearbyList };
+  }
 };
 </script>
 
@@ -103,39 +52,8 @@ export default {
     font-size: 0.18rem;
     margin: 0.16rem 0 0.02rem 0;
   }
-  &__item {
-    display: flex;
-    padding-top: 0.12rem;
-    &__img {
-      width: 0.56rem;
-      height: 0.56rem;
-      margin-right: 0.16rem;
-    }
-  }
-  &__content {
-    flex: 1;
-    padding-bottom: 0.12rem;
-    border-bottom: 1px solid $content-bgColor;
-    &__title {
-      line-height: 0.22rem;
-      font-size: 0.16rem;
-      color: $content-fontColor;
-    }
-    &__tags {
-      margin: 0.08rem 0;
-      font-size: 0.13rem;
-      line-height: 0.18rem;
-      color: $content-fontColor;
-    }
-    &__tag {
-      margin-right: 0.16rem;
-    }
-    &__highlight {
-      color: #e93b3b;
-      font-size: 0.13rem;
-      line-height: 0.18rem;
-      margin: 0;
-    }
+  a {
+    text-decoration: none;
   }
 }
 </style>

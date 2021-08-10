@@ -41,20 +41,25 @@ const useLoginEffect = showToast => {
   const { username, password } = toRefs(data);
 
   const handleLogin = async () => {
-    try {
-      const result = await post("/api/user/login", {
-        username: username,
-        password: password
-      });
-      console.log(result);
-      if (result?.errno === 0) {
-        localStorage.isLogin = true;
-        router.push({ name: "Home" });
-      } else {
-        showToast("登录失败");
+    if (username.value !== "" && password.value !== "") {
+      console.log("username:", username, "password:", password);
+      try {
+        const result = await post("/api/user/login", {
+          username: username.value,
+          password: password.value
+        });
+        console.log(result);
+        if (result?.errno === 0) {
+          localStorage.isLogin = true;
+          router.push({ name: "Home" });
+        } else {
+          showToast("登录失败");
+        }
+      } catch (e) {
+        showToast("请求失败");
       }
-    } catch (e) {
-      showToast("请求失败");
+    } else {
+      showToast("请输入用户名和密码");
     }
   };
 
