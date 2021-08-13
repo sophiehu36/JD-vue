@@ -1,16 +1,23 @@
 <template>
+  <div class="mask" v-if="showCart" @click="handleCartShowChange"></div>
   <div class="cart">
-    <div class="product">
+    <div class="product" v-if="showCart">
       <div class="product__header">
         <div class="product__header__all">
-          <span class="product__header__checked iconfont">&#xe611;</span>
+          <span
+            class="product__header__checked iconfont"
+            :class="{ isChecked: calculations.allChecked }"
+            @click="() => handleAllChecked(shopId, calculations.allChecked)"
+            >&#xe611;</span
+          >
           全选
         </div>
-        <div
-          class="product__header__clear"
-          @click="() => clearCartProducts(shopId)"
-        >
-          清空购物车
+        <div class="product__header__clear">
+          <span
+            class="product__header__clear__btn"
+            @click="() => clearCartProducts(shopId)"
+            >清空购物车</span
+          >
         </div>
       </div>
       <template v-for="item in productList" :key="item._id">
@@ -55,19 +62,22 @@
           class="check__icon__img"
           src="http://www.dell-lee.com/imgs/vue3/basket.png"
           alt=""
+          @click="handleCartShowChange"
         />
-        <div class="check__icon__tag">{{ count }}</div>
+        <div class="check__icon__tag">{{ calculations.count }}</div>
       </div>
       <div class="check__info">
-        总计：<span class="check__info__price">&yen; {{ total }}</span>
+        总计：<span class="check__info__price">&yen; {{ calculations.total }}</span>
       </div>
-      <div class="check__btn">去结算</div>
+      <div class="check__btn">
+        <router-link :to="{ name: 'Home' }">去结算</router-link>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import { useCommonCartEffect } from "./commonCartEffect";
@@ -78,38 +88,38 @@ const useCartEffect = () => {
   const route = useRoute();
   const shopId = route.params.id;
   const cartList = store.state.cartList;
-  const count = computed(() => {
-    const productList = cartList[shopId];
+
+  const calculations = computed(() => {
+    const productList = cartList[shopId]?.productList;
     let count = 0;
+    let total = 0;
+    let allChecked = true;
     if (productList) {
       for (const i in productList) {
         const product = productList[i];
         count += product.count;
-      }
-    }
-    return count;
-  });
-  const total = computed(() => {
-    const productList = cartList[shopId];
-    let total = 0;
-    if (productList) {
-      for (const i in productList) {
-        const product = productList[i];
         if (product.check) {
           total += product.count * product.price;
         }
+        if (product.count && !product.check) {
+          allChecked = false;
+        }
       }
     }
-    return total.toFixed(2);
+    return { count, total: total.toFixed(2), allChecked };
   });
 
   const productList = computed(() => {
-    const productList = cartList[shopId] || [];
+    const productList = cartList[shopId]?.productList || {};
     return productList;
   });
 
   const changeCartItemChecked = (shopId, productId) => {
     store.commit("changeCartItemChecked", { shopId, productId });
+  };
+
+  const handleAllChecked = (shopId, allChecked) => {
+    store.commit("handleAllChecked", { shopId, allChecked });
   };
 
   const clearCartProducts = shopId => {
@@ -119,36 +129,48 @@ const useCartEffect = () => {
   const { changeCartItemInfo } = useCommonCartEffect();
   return {
     shopId,
-    count,
-    total,
+    calculations,
     productList,
     changeCartItemInfo,
     changeCartItemChecked,
-    clearCartProducts
+    clearCartProducts,
+    handleAllChecked
   };
+};
+
+// 展示隐藏购物车逻辑
+const toggleCartEffect = () => {
+  const showCart = ref(false);
+  const handleCartShowChange = () => {
+    showCart.value = !showCart.value;
+  };
+  return { showCart, handleCartShowChange };
 };
 
 export default {
   name: "Cart",
   setup() {
+    const { showCart, handleCartShowChange } = toggleCartEffect();
     const {
       shopId,
-      count,
-      total,
+      calculations,
       productList,
       changeCartItemInfo,
       changeCartItemChecked,
-      clearCartProducts
+      clearCartProducts,
+      handleAllChecked
     } = useCartEffect();
 
     return {
+      showCart,
+      handleCartShowChange,
       shopId,
-      count,
-      total,
+      calculations,
       productList,
       changeCartItemInfo,
       changeCartItemChecked,
-      clearCartProducts
+      clearCartProducts,
+      handleAllChecked
     };
   }
 };
@@ -156,14 +178,23 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/style/mixins.scss";
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
 .cart {
   box-sizing: border-box;
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 0.49rem;
-  line-height: 0.49rem;
+  height: 0.5rem;
+  line-height: 0.5rem;
   box-shadow: 0 -1px 1px 0 #f1f1f1;
 }
 
@@ -177,9 +208,10 @@ export default {
   flex-direction: column;
   flex: 1;
   background: #fff;
+  border-bottom: 1px solid #f1f1f1;
   &__header {
     display: flex;
-    line-height: 0.52rem;
+    line-height: 0.5rem;
     border-bottom: 1px solid #f1f1f1;
     font-size: 0.14rem;
     color: #333;
@@ -188,9 +220,11 @@ export default {
       margin-left: 0.16rem;
     }
     &__checked {
+      display: inline-block;
       color: #f1f1f1;
       font-size: 0.2rem;
       margin-right: 0.08rem;
+      transform: translateY(2.5px);
     }
     .isChecked {
       color: #0091ff;
@@ -199,6 +233,10 @@ export default {
       flex: 1;
       text-align: right;
       margin-right: 0.16rem;
+      &__btn {
+        display: inline-block;
+        margin: 1px 0;
+      }
     }
   }
   &__item {
@@ -275,10 +313,11 @@ export default {
 }
 
 .check {
-  height: 0.49rem;
+  height: 0.5rem;
   box-sizing: border-box;
   display: flex;
   align-items: center;
+  background: #fff;
   &__icon {
     position: relative;
     width: 0.84rem;
@@ -316,12 +355,16 @@ export default {
     }
   }
   &__btn {
+    box-sizing: border-box;
     width: 0.98rem;
-    height: 0.51rem;
+    height: 0.5rem;
     text-align: center;
     background: #4fb0f9;
-    color: #fff;
     font-size: 0.14rem;
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
   }
 }
 </style>

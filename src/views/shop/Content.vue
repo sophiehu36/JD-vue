@@ -30,14 +30,14 @@
         <div class="product__number">
           <span
             class="product__number__minus"
-            v-show="cartList?.[shopId]?.[item._id]?.count"
-            @click="() => changeCartItemInfo(shopId, item._id, item, -1)"
+            v-show="cartList?.[shopId]?.productList?.[item._id]?.count"
+            @click="() => changeCartItem(shopId, item._id, item, -1, shopName)"
             >-</span
           >
-          {{ cartList?.[shopId]?.[item._id]?.count || "" }}
+          {{ cartList?.[shopId]?.productList?.[item._id]?.count || "" }}
           <span
             class="product__number__plus"
-            @click="() => changeCartItemInfo(shopId, item._id, item, 1)"
+            @click="() => changeCartItem(shopId, item._id, item, 1, shopName)"
             >+</span
           >
         </div>
@@ -97,12 +97,17 @@ const useCurrentListEffect = (currentTab, shopId) => {
 
 export default {
   name: "Content",
+  props: ["shopName"],
   setup() {
     const route = useRoute();
     const shopId = route.params.id;
     const { currentTab, handleTabClick } = useTabEffect();
     const { list } = useCurrentListEffect(currentTab, shopId);
-    const { cartList, changeCartItemInfo } = useCommonCartEffect();
+    const {
+      cartList,
+      changeCartItem
+    } = useCommonCartEffect();
+
     return {
       list,
       cartList,
@@ -110,7 +115,7 @@ export default {
       currentTab,
       categories,
       handleTabClick,
-      changeCartItemInfo
+      changeCartItem,
     };
   }
 };

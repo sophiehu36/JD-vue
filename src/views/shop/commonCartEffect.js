@@ -9,5 +9,12 @@ export const useCommonCartEffect = () => {
     console.log(shopId, productId, productInfo);
     store.commit("changeCartItemInfo", { shopId, productId, productInfo, num });
   };
-  return { cartList, changeCartItemInfo };
+  const changeShopName = (shopId, shopName) => {
+    store.commit("changeShopName", { shopId, shopName });
+  };
+  const changeCartItem = (shopId, productId, productInfo, num, shopName) => {
+    changeCartItemInfo(shopId, productId, productInfo, num);
+    changeShopName(shopId, shopName);
+  };
+  return { cartList, changeCartItemInfo, changeCartItem };
 };
