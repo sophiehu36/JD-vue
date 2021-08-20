@@ -15,6 +15,22 @@ const routes = [
       import(/* webpackChunkName: "shop" */ "@/views/shop/Shop.vue")
   },
   {
+    path: "/cartList",
+    name: "CartList",
+    // 异步路由，只有访问home页面时才加载对应资源
+    component: () =>
+      import(/* webpackChunkName: "cartList" */ "@/views/cartList/CartList.vue")
+  },
+  {
+    path: "/orderConfirmation/:id",
+    name: "OrderConfirmation",
+    // 异步路由，只有访问home页面时才加载对应资源
+    component: () =>
+      import(
+        /* webpackChunkName: "cartList" */ "@/views/orderConfirmation/OrderConfirmation.vue"
+      )
+  },
+  {
     path: "/login",
     name: "Login",
     component: () =>

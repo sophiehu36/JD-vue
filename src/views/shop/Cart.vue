@@ -1,7 +1,11 @@
 <template>
-  <div class="mask" v-if="showCart" @click="handleCartShowChange"></div>
+  <div
+    class="mask"
+    v-if="showCart && calculations.total > 0"
+    @click="handleCartShowChange"
+  ></div>
   <div class="cart">
-    <div class="product" v-if="showCart">
+    <div class="product" v-if="showCart && calculations.total > 0">
       <div class="product__header">
         <div class="product__header__all">
           <span
@@ -67,52 +71,30 @@
         <div class="check__icon__tag">{{ calculations.count }}</div>
       </div>
       <div class="check__info">
-        总计：<span class="check__info__price">&yen; {{ calculations.total }}</span>
+        总计：<span class="check__info__price"
+          >&yen; {{ calculations.total }}</span
+        >
       </div>
       <div class="check__btn">
-        <router-link :to="{ name: 'Home' }">去结算</router-link>
+        <router-link :to="{ path: `/orderConfirmation/${shopId}` }"
+          >去结算</router-link
+        >
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
-import { useCommonCartEffect } from "./commonCartEffect";
+import { useCommonCartEffect } from "../../effects/cartEffects";
 
 // 获取购物车信息逻辑
 const useCartEffect = () => {
   const store = useStore();
   const route = useRoute();
   const shopId = route.params.id;
-  const cartList = store.state.cartList;
-
-  const calculations = computed(() => {
-    const productList = cartList[shopId]?.productList;
-    let count = 0;
-    let total = 0;
-    let allChecked = true;
-    if (productList) {
-      for (const i in productList) {
-        const product = productList[i];
-        count += product.count;
-        if (product.check) {
-          total += product.count * product.price;
-        }
-        if (product.count && !product.check) {
-          allChecked = false;
-        }
-      }
-    }
-    return { count, total: total.toFixed(2), allChecked };
-  });
-
-  const productList = computed(() => {
-    const productList = cartList[shopId]?.productList || {};
-    return productList;
-  });
 
   const changeCartItemChecked = (shopId, productId) => {
     store.commit("changeCartItemChecked", { shopId, productId });
@@ -126,7 +108,7 @@ const useCartEffect = () => {
     store.commit("clearCartProducts", { shopId });
   };
 
-  const { changeCartItemInfo } = useCommonCartEffect();
+  const { productList, calculations, changeCartItemInfo } = useCommonCartEffect(shopId);
   return {
     shopId,
     calculations,

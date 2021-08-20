@@ -1,27 +1,19 @@
 import { createStore } from "vuex";
 
+// 保存已点选的产品信息
+const setLocalCartList = state => {
+  const cartListString = JSON.stringify(state.cartList);
+  localStorage.cartList = cartListString;
+};
+
+const getLocalCartList = () => {
+  return JSON.parse(localStorage.cartList) || {};
+};
+
 export default createStore({
   state: {
     // { shopId: { shopName: '', productList: { productId: {} }}}
-    cartList: {
-      // 第一层级是商铺id
-      // shopId: {
-      //   // 第二层是商品id
-      //   shopName: "",
-      //   productList: {
-      //     // 第三层内容是商品内容及购物数量
-      //     productId: {
-      //       imgUrl: "http://www.dell-lee.com/imgs/vue3/tomato.png",
-      //       name: "番茄 250g / 份",
-      //       oldPrice: 39.6,
-      //       price: 33.6,
-      //       sales: 10,
-      //       _id: "1",
-      //       count: 2
-      //     }
-      //   }
-      // }
-    }
+    cartList: getLocalCartList()
   },
   mutations: {
     changeCartItemInfo(state, payload) {
@@ -41,6 +33,7 @@ export default createStore({
       }
       shopInfo.productList[productId] = product;
       state.cartList[shopId] = shopInfo;
+      setLocalCartList(state);
     },
     changeShopName(state, payload) {
       const { shopId, shopName } = payload;
@@ -50,15 +43,18 @@ export default createStore({
       };
       shopInfo.shopName = shopName;
       state.cartList[shopId] = shopInfo;
+      setLocalCartList(state);
     },
     changeCartItemChecked(state, payload) {
       const { shopId, productId } = payload;
       const product = state.cartList[shopId].productList[productId];
       product.check = !product.check;
+      setLocalCartList(state);
     },
     clearCartProducts(state, payload) {
       const { shopId } = payload;
       state.cartList[shopId].productList = {};
+      setLocalCartList(state);
     },
     handleAllChecked(state, payload) {
       const { shopId, allChecked } = payload;
@@ -74,6 +70,7 @@ export default createStore({
           }
         }
       }
+      setLocalCartList(state);
     }
   },
   actions: {},

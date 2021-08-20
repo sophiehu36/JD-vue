@@ -30,11 +30,11 @@
         <div class="product__number">
           <span
             class="product__number__minus"
-            v-show="cartList?.[shopId]?.productList?.[item._id]?.count"
+            v-show="getProductCartCount(cartList, shopId, item._id)"
             @click="() => changeCartItem(shopId, item._id, item, -1, shopName)"
             >-</span
           >
-          {{ cartList?.[shopId]?.productList?.[item._id]?.count || "" }}
+          {{ getProductCartCount(cartList, shopId, item._id) }}
           <span
             class="product__number__plus"
             @click="() => changeCartItem(shopId, item._id, item, 1, shopName)"
@@ -50,7 +50,7 @@
 import { ref, reactive, toRefs, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { get } from "@/utils/request";
-import { useCommonCartEffect } from "./commonCartEffect";
+import { useCommonCartEffect } from "../../effects/cartEffects";
 
 const categories = [
   { name: "全部商品", tab: "all" },
@@ -103,10 +103,10 @@ export default {
     const shopId = route.params.id;
     const { currentTab, handleTabClick } = useTabEffect();
     const { list } = useCurrentListEffect(currentTab, shopId);
-    const {
-      cartList,
-      changeCartItem
-    } = useCommonCartEffect();
+    const { cartList, changeCartItem } = useCommonCartEffect();
+    const getProductCartCount = (cartList, shopId, productId) => {
+      return cartList?.[shopId]?.productList?.[productId]?.count || "";
+    };
 
     return {
       list,
@@ -116,6 +116,7 @@ export default {
       categories,
       handleTabClick,
       changeCartItem,
+      getProductCartCount
     };
   }
 };
