@@ -3,11 +3,11 @@
     <StaticPart />
     <Nearby />
   </div>
-  <Docker />
+  <Docker :current-index="0" />
 </template>
 
 <script>
-import Docker from "../Docker.vue";
+import Docker from "../../components/Docker.vue";
 import Nearby from "../Nearby.vue";
 import StaticPart from "../StaticPart.vue";
 
@@ -25,7 +25,7 @@ export default {
   position: absolute;
   left: 0;
   top: 0;
-  bottom: 0.5rem;
+  bottom: 0.51rem;
   right: 0;
   padding: 0 0.18rem 0.2rem 0.18rem;
   overflow-y: auto;

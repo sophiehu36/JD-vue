@@ -31,6 +31,15 @@ const routes = [
       )
   },
   {
+    path: "/orderList",
+    name: "OrderList",
+    // 异步路由，只有访问home页面时才加载对应资源
+    component: () =>
+      import(
+        /* webpackChunkName: "orderList" */ "@/views/orderList/OrderList.vue"
+      )
+  },
+  {
     path: "/login",
     name: "Login",
     component: () =>

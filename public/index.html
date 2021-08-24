@@ -6,6 +6,15 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 		<link rel="icon" href="<%= BASE_URL %>favicon.ico" />
 		<title><%= htmlWebpackPlugin.options.title %></title>
+    <style>
+      #app {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    </style>
 	</head>
 	<body>
 		<noscript>
@@ -23,6 +32,15 @@
 				b = 20;
 				console.log(b);
 			})();
+
+      var a = 1;
+      f()
+      function f() {
+        console.log(a)
+        if(false) {
+          let a = 2 // let/var作用域的概念
+        }
+      }
 		</script>
 	</body>
 </html>

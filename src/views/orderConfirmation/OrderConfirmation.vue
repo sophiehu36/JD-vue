@@ -1,32 +1,14 @@
 <template>
   <div class="wrapper">
-    <div class="top">
-      <div class="top__header">
-        <div class="iconfont top__header__back" @click="handleBackClick">
-          &#xe601;
-        </div>
-        确认订单
-      </div>
-      <div class="top__receiver">
-        <div class="top__receiver__title">收货地址</div>
-        <div class="top__receiver__address">
-          北京理工大学国防科技园2号楼10层
-        </div>
-        <div class="top__receiver__info">
-          <span class="top__receiver__name">瑶妹（先生）</span>
-          <span class="top__receiver__phone">18911024266</span>
-        </div>
-        <div class="iconfont top__receiver__enter">&#xe601;</div>
-      </div>
-    </div>
+    <TopArea />
     <div class="products">
       <div class="products__title">{{ shopName }}</div>
       <div class="products__list">
         <div class="product">
           <div
-            class="product__item"
             v-for="item in productList"
             :key="item._id"
+            class="product__item"
           >
             <img class="product__item__img" :src="item.imgUrl" alt="" />
             <div class="product__item__detail">
@@ -36,7 +18,7 @@
                 {{ item.count }}
                 <span class="product__item__total"
                   ><span class="product__item__yen">&yen;</span
-                  >{{ item.price * item.count }}</span
+                  >{{ (item.price * item.count).toFixed(2) }}</span
                 >
               </p>
             </div>
@@ -48,26 +30,109 @@
       <div class="order__price">
         实付金额<b> &yen;{{ calculations.total }}</b>
       </div>
-      <div class="order__btn">提交订单</div>
+      <div class="order__btn" @click="() => handleShowConfirmChange(true)">
+        提交订单
+      </div>
+    </div>
+    <div
+      class="mask"
+      v-show="showMask"
+      @click.self="handleShowConfirmChange(false)"
+    >
+      <div class="mask__content">
+        <h3 class="mask__content__title">确认要离开收银台？</h3>
+        <p class="mask__content__desc">请尽快完成支付，否则将被取消</p>
+        <div class="mask__content__btns">
+          <div
+            class="mask__content__btn mask__content__btn--cancel"
+            @click="() => handleConfirmOrder(true)"
+          >
+            取消订单
+          </div>
+          <div
+            class="mask__content__btn mask__content__btn--confirm"
+            @click="() => handleConfirmOrder(false)"
+          >
+            确认支付
+          </div>
+        </div>
+      </div>
+      <Toast v-if="toastData.showToast" :message="toastData.toastMsg" />
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useStore } from "vuex";
+import { post } from "@/utils/request";
 import { useCommonCartEffect } from "../../effects/cartEffects";
-import { useRoute, useRouter } from "vue-router";
+import Toast, { useToastEffect } from "@/components/Toast";
+import TopArea from "./TopArea.vue";
+
+// 下单相关逻辑
+const useMakeOrderEffect = (shopId, shopName, productList) => {
+  const router = useRouter();
+  const store = useStore();
+
+  const { toastData, showToast } = useToastEffect();
+
+  const handleConfirmOrder = async boolean => {
+    const products = [];
+    for (const i in productList.value) {
+      const product = productList.value[i];
+      products.push({ id: parseInt(product._id), num: product.count });
+    }
+    try {
+      const result = await post("/api/order", {
+        addressId: 1,
+        shopId: parseInt(shopId),
+        shopName: shopName.value,
+        isCanceled: boolean,
+        products
+      });
+      console.log(result);
+      if (result?.errno === 0) {
+        store.commit("clearCartProducts", { shopId });
+        router.push({ name: "OrderList" });
+      }
+    } catch (e) {
+      showToast("订单发送失败");
+    }
+  };
+  return { toastData, handleConfirmOrder };
+};
 
 export default {
   name: "OrderConfirmation",
+  components: { TopArea, Toast },
   setup() {
-    const router = useRouter();
+    let showMask = ref(false);
     const route = useRoute();
+
     const shopId = route.params.id;
     const { productList, shopName, calculations } = useCommonCartEffect(shopId);
-    const handleBackClick = () => {
-      router.back();
+
+    const handleShowConfirmChange = status => {
+      showMask = status;
     };
-    return { productList, shopName, calculations, handleBackClick };
+
+    const { toastData, handleConfirmOrder } = useMakeOrderEffect(
+      shopId,
+      shopName,
+      productList
+    );
+
+    return {
+      productList,
+      shopName,
+      calculations,
+      showMask,
+      toastData,
+      handleShowConfirmChange,
+      handleConfirmOrder
+    };
   }
 };
 </script>
@@ -84,66 +149,9 @@ export default {
   overflow-y: scroll;
 }
 
-.top {
-  height: 1.96rem;
-  position: relative;
-  background-size: 100% 1.59rem;
-  background-image: linear-gradient(0deg, rgba(0, 145, 255, 0) 4%, #0091ff 50%);
-  background-repeat: no-repeat;
-
-  &__header {
-    position: relative;
-    padding-top: 0.26rem;
-    line-height: 0.24rem;
-    color: white;
-    font-size: 0.16rem;
-    text-align: center;
-    &__back {
-      position: absolute;
-      left: 0.19rem;
-    }
-  }
-  &__receiver {
-    position: absolute;
-    left: 0.18rem;
-    right: 0.18rem;
-    bottom: 0;
-    height: 1.11rem;
-    background: white;
-    border-radius: 0.04rem;
-    padding-left: 0.16rem;
-    &__title {
-      font-size: 0.16rem;
-      line-height: 0.22rem;
-      margin-top: 0.16rem;
-      color: #333;
-    }
-    &__address {
-      margin: 0.14rem 0 0.06rem 0;
-      font-size: 0.14rem;
-      line-height: 0.2rem;
-      color: #333;
-    }
-    &__info {
-      font-size: 0.12rem;
-      line-height: 0.17rem;
-      color: #666666;
-    }
-    &__name {
-      margin-right: 0.06rem;
-    }
-    &__enter {
-      position: absolute;
-      right: 0.16rem;
-      top: 0.48rem;
-      color: #666666;
-      transform: rotate(180deg);
-    }
-  }
-}
-
 .products {
   margin: 0.16rem 0.18rem 0.65rem 0.18rem;
+  padding-bottom: 0.16rem;
   background: #fff;
   border-radius: 0.04rem;
   overflow-y: scroll;
@@ -161,7 +169,7 @@ export default {
       box-sizing: border-box;
       position: relative;
       display: flex;
-      padding: 0.16rem;
+      padding: 0.16rem 0.16rem 0 0.16rem;
       width: 100%;
       &__detail {
         overflow: hidden;
@@ -225,6 +233,61 @@ export default {
     color: #fff;
     text-align: center;
     font-size: 0.14rem;
+  }
+}
+
+.mask {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  &__content {
+    background: #ffffff;
+    border-radius: 4px;
+    width: 3.01rem;
+    height: 1.57rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    &__title {
+      font-size: 0.18rem;
+      color: #333333;
+      line-height: 0.25rem;
+      margin: 0;
+    }
+    &__desc {
+      font-size: 0.14rem;
+      line-height: 0.2rem;
+      color: #666666;
+      margin-top: 0.08rem;
+      margin-bottom: 0.24rem;
+    }
+    &__btns {
+      display: flex;
+    }
+    &__btn {
+      border: 1px solid #4fb0f9;
+      border-radius: 16px;
+      font-size: 0.14rem;
+      height: 0.3rem;
+      line-height: 0.3rem;
+      width: 0.78rem;
+      text-align: center;
+      margin: 0 0.12rem;
+      &--cancel {
+        color: #0091ff;
+      }
+      &--confirm {
+        background: #4fb0f9;
+        color: #fff;
+      }
+    }
   }
 }
 </style>

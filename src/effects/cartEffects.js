@@ -18,7 +18,14 @@ export const useCommonCartEffect = shopId => {
   };
   const productList = computed(() => {
     const productList = cartList[shopId]?.productList || {};
-    return productList;
+    const notEmptyProductList = {};
+    for (const i in productList) {
+      const product = productList[i];
+      if (product.count > 0) {
+        notEmptyProductList[i] = product;
+      }
+    }
+    return notEmptyProductList;
   });
 
   const shopName = computed(() => {

@@ -75,7 +75,7 @@
           >&yen; {{ calculations.total }}</span
         >
       </div>
-      <div class="check__btn">
+      <div class="check__btn" v-show="calculations.total > 0">
         <router-link :to="{ path: `/orderConfirmation/${shopId}` }"
           >去结算</router-link
         >
@@ -108,7 +108,9 @@ const useCartEffect = () => {
     store.commit("clearCartProducts", { shopId });
   };
 
-  const { productList, calculations, changeCartItemInfo } = useCommonCartEffect(shopId);
+  const { productList, calculations, changeCartItemInfo } = useCommonCartEffect(
+    shopId
+  );
   return {
     shopId,
     calculations,
