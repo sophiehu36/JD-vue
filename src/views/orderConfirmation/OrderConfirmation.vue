@@ -248,7 +248,7 @@ export default {
   background: rgba(0, 0, 0, 0.5);
   &__content {
     background: #ffffff;
-    border-radius: 4px;
+    border-radius: 0.04rem;
     width: 3.01rem;
     height: 1.57rem;
     display: flex;
@@ -272,8 +272,8 @@ export default {
       display: flex;
     }
     &__btn {
-      border: 1px solid #4fb0f9;
-      border-radius: 16px;
+      border: 0.01rem solid #4fb0f9;
+      border-radius: 0.16rem;
       font-size: 0.14rem;
       height: 0.3rem;
       line-height: 0.3rem;

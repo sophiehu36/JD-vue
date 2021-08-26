@@ -77,7 +77,7 @@ export default {
     font-size: 0.2rem;
     color: #b6b6b6;
     margin-right: 0.08rem;
-    transform: translateX(-4px);
+    transform: translateX(-0.04rem);
   }
   &__content {
     box-sizing: border-box;
@@ -87,7 +87,7 @@ export default {
     padding: 0 0.16rem;
     height: 0.32rem;
     background: #f5f5f5;
-    border-radius: 16px;
+    border-radius: 0.16rem;
     &__icon {
       color: #b6b6b6;
       margin-right: 0.12rem;
@@ -102,9 +102,9 @@ export default {
         outline: none;
       }
       &::placeholder {
-        font-size: 14px;
+        font-size: 0.14rem;
         color: $content-fontColor;
-        line-height: 16px;
+        line-height: 0.16rem;
       }
     }
   }

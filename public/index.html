@@ -6,15 +6,15 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 		<link rel="icon" href="<%= BASE_URL %>favicon.ico" />
 		<title><%= htmlWebpackPlugin.options.title %></title>
-    <style>
-      #app {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
-    </style>
+		<style>
+			#app {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+			}
+		</style>
 	</head>
 	<body>
 		<noscript>
@@ -27,20 +27,12 @@
 		<div id="app"></div>
 		<!-- built files will be auto injected -->
 		<script>
-			var b = 10;
-			(function b() {
-				b = 20;
-				console.log(b);
-			})();
-
-      var a = 1;
-      f()
-      function f() {
-        console.log(a)
-        if(false) {
-          let a = 2 // let/var作用域的概念
-        }
-      }
+			var width =
+				document.documentElement.clientWidth || document.body.clientWidth;
+			var ratio = width / 375;
+			var fontSize = 100 * ratio;
+			document.getElementsByTagName("html")[0].style["font-size"] =
+				fontSize + "px";
 		</script>
 	</body>
 </html>

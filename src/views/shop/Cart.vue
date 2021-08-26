@@ -179,7 +179,7 @@ export default {
   bottom: 0;
   height: 0.5rem;
   line-height: 0.5rem;
-  box-shadow: 0 -1px 1px 0 #f1f1f1;
+  box-shadow: 0 -0.01rem 0.01rem 0 #f1f1f1;
 }
 
 .product {
@@ -192,11 +192,11 @@ export default {
   flex-direction: column;
   flex: 1;
   background: #fff;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 0.01rem solid #f1f1f1;
   &__header {
     display: flex;
     line-height: 0.5rem;
-    border-bottom: 1px solid #f1f1f1;
+    border-bottom: 0.01rem solid #f1f1f1;
     font-size: 0.14rem;
     color: #333;
     &__all {
@@ -208,7 +208,7 @@ export default {
       color: #f1f1f1;
       font-size: 0.2rem;
       margin-right: 0.08rem;
-      transform: translateY(2.5px);
+      transform: translateY(0.025rem);
     }
     .isChecked {
       color: #0091ff;
@@ -219,7 +219,7 @@ export default {
       margin-right: 0.16rem;
       &__btn {
         display: inline-block;
-        margin: 1px 0;
+        margin: 0.01rem 0;
       }
     }
   }
@@ -334,7 +334,7 @@ export default {
     &__price {
       height: 0.49rem;
       box-sizing: border-box;
-      font-size: 18px;
+      font-size: 0.18rem;
       color: #e93b3b;
     }
   }

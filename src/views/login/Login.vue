@@ -92,11 +92,11 @@ export default {
   top: 0;
   bottom: 0;
   right: 0;
-  padding-top: 1.4rem;
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 .user {
@@ -114,8 +114,8 @@ export default {
     width: 2.95rem;
     height: 0.48rem;
     background: #f9f9f9;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
+    border: 0.01rem solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.06rem;
     margin-bottom: 0.16rem;
     input {
       width: 100%;

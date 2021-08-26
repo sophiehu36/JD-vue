@@ -36,7 +36,7 @@ export default {
   &__content {
     flex: 1;
     padding-bottom: 0.12rem;
-    border-bottom: 1px solid $content-bgColor;
+    border-bottom: 0.01rem solid $content-bgColor;
     &__title {
       line-height: 0.22rem;
       font-size: 0.16rem;
